@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<!--
+Created using JS Bin
+http://jsbin.com
+
+Copyright (c) 2025 by anonymous (http://jsbin.com/welitivedo/1/edit)
+
+Released under the MIT license: http://jsbin.mit-license.org
+-->
+<meta name="robots" content="noindex">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBA Teams Roster</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            padding: 20px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        body.dark-mode {
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px;
+            background-color: #17408B;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .dark-mode .header {
+            background-color: #1a1a1a;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            color: #17408B;
+            transition: color 0.3s ease;
+        }
+
+        .dark-mode .theme-toggle {
+            color: #ffffff;
+        }
+
+        .team-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .team-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .dark-mode .team-card {
+            background: #1e1e1e;
+            color: #ffffff;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .team-logo {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+
+        .team-name {
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .team-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle">🌞</button>
+
+    <div class="header">
+        <h1>🏀 NBA Teams</h1>
+        <p>NBA Team Rosters</p>
+    </div>
+
+    <div class="team-container" id="teamsContainer"></div>
+
+    <script>
+        // Teams Data
+        const teams = [
+            { name: 'Atlanta Hawks', logo: 'https://cdn.nba.com/logos/nba/1610612737/primary/L/logo.svg' },
+            { name: 'Boston Celtics', logo: 'https://cdn.nba.com/logos/nba/1610612738/primary/L/logo.svg' },
+            { name: 'Brooklyn Nets', logo: 'https://cdn.nba.com/logos/nba/1610612751/primary/L/logo.svg' },
+            { name: 'Charlotte Hornets', logo: 'https://cdn.nba.com/logos/nba/1610612766/primary/L/logo.svg' },
+            { name: 'Chicago Bulls', logo: 'https://cdn.nba.com/logos/nba/1610612741/primary/L/logo.svg' },
+            { name: 'Cleveland Cavaliers', logo: 'https://cdn.nba.com/logos/nba/1610612739/primary/L/logo.svg' },
+            { name: 'Dallas Mavericks', logo: 'https://cdn.nba.com/logos/nba/1610612742/primary/L/logo.svg' },
+            { name: 'Denver Nuggets', logo: 'https://cdn.nba.com/logos/nba/1610612743/primary/L/logo.svg' },
+            { name: 'Detroit Pistons', logo: 'https://cdn.nba.com/logos/nba/1610612765/primary/L/logo.svg' },
+            { name: 'Golden State Warriors', logo: 'https://cdn.nba.com/logos/nba/1610612744/primary/L/logo.svg' },
+            { name: 'Houston Rockets', logo: 'https://cdn.nba.com/logos/nba/1610612745/primary/L/logo.svg' },
+            { name: 'Indiana Pacers', logo: 'https://cdn.nba.com/logos/nba/1610612754/primary/L/logo.svg' },
+            { name: 'LA Clippers', logo: 'https://cdn.nba.com/logos/nba/1610612746/primary/L/logo.svg' },
+            { name: 'Los Angeles Lakers', logo: 'https://cdn.nba.com/logos/nba/1610612747/primary/L/logo.svg' },
+            { name: 'Memphis Grizzlies', logo: 'https://cdn.nba.com/logos/nba/1610612763/primary/L/logo.svg' },
+            { name: 'Miami Heat', logo: 'https://cdn.nba.com/logos/nba/1610612748/primary/L/logo.svg' },
+            { name: 'Milwaukee Bucks', logo: 'https://cdn.nba.com/logos/nba/1610612749/primary/L/logo.svg' },
+            { name: 'Minnesota Timberwolves', logo: 'https://cdn.nba.com/logos/nba/1610612750/primary/L/logo.svg' },
+            { name: 'New Orleans Pelicans', logo: 'https://cdn.nba.com/logos/nba/1610612740/primary/L/logo.svg' },
+            { name: 'New York Knicks', logo: 'https://cdn.nba.com/logos/nba/1610612752/primary/L/logo.svg' },
+            { name: 'Oklahoma City Thunder', logo: 'https://cdn.nba.com/logos/nba/1610612760/primary/L/logo.svg' },
+            { name: 'Orlando Magic', logo: 'https://cdn.nba.com/logos/nba/1610612753/primary/L/logo.svg' },
+            { name: 'Philadelphia 76ers', logo: 'https://cdn.nba.com/logos/nba/1610612755/primary/L/logo.svg' },
+            { name: 'Phoenix Suns', logo: 'https://cdn.nba.com/logos/nba/1610612756/primary/L/logo.svg' },
+            { name: 'Portland Trail Blazers', logo: 'https://cdn.nba.com/logos/nba/1610612757/primary/L/logo.svg' },
+            { name: 'Sacramento Kings', logo: 'https://cdn.nba.com/logos/nba/1610612758/primary/L/logo.svg' },
+            { name: 'San Antonio Spurs', logo: 'https://cdn.nba.com/logos/nba/1610612759/primary/L/logo.svg' },
+            { name: 'Toronto Raptors', logo: 'https://cdn.nba.com/logos/nba/1610612761/primary/L/logo.svg' },
+            { name: 'Utah Jazz', logo: 'https://cdn.nba.com/logos/nba/1610612762/primary/L/logo.svg' },
+            { name: 'Washington Wizards', logo: 'https://cdn.nba.com/logos/nba/1610612764/primary/L/logo.svg' }
+        ];
+
+        const container = document.getElementById('teamsContainer');
+
+        // Render Teams
+        teams.forEach(team => {
+            const card = document.createElement('div');
+            card.className = 'team-card';
+            card.innerHTML = `
+                <img src="${team.logo}" alt="${team.name}" class="team-logo">
+                <div class="team-name">${team.name}</div>
+            `;
+            container.appendChild(card);
+        });
+
+        // Dark Mode Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                themeToggle.textContent = '🌙';
+            } else {
+                themeToggle.textContent = '🌞';
+            }
+        });
+    </script>
+</body>
+</html>
